@@ -15,7 +15,6 @@ imputer.fit(x[:])
 x[:] = imputer.transform(x[:])
 
 #encoding all independent cetegorical values in x
-from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 ohe = OneHotEncoder(sparse =False)
 x_ohe = ohe.fit_transform(x)
@@ -29,3 +28,4 @@ from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
 x_train[:,:]=sc.fit_transform(x_train[:,:])
 x_test[:,:] = sc.fit_transform(x_test[:,:])
+

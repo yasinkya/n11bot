@@ -8,7 +8,7 @@ from enum import Enum
 def dataExtr():
     createXlsx()
     productNumber=0
-    for i in range(1,51):
+    for i in range(1,50):
         url="https://www.n11.com/bilgisayar/dizustu-bilgisayar?pg="+str(i)
         #get request then parse
         try:
@@ -30,7 +30,8 @@ def dataExtr():
             propNameL.append("Name")
             propValL.append(productName)    #add property name then add property value
             propNameL.append("Price")
-            propValL.append(productPrice)
+            propValL.append(float(productPrice[:-3].replace(",",".")))
+            
 
             try:
                 preq=requests.get(productUrl)
@@ -46,6 +47,7 @@ def dataExtr():
                 except Exception:
                     val=prdprop.find("a",attrs={"class","data"}).find("span").text
 
+                val=editVal_var(name,val)
                 propNameL.append(name)
                 propValL.append(val)
             
@@ -53,6 +55,22 @@ def dataExtr():
             productNumber+=1
     
         print("{}. page was completed".format(i))
+
+
+def editVal_var(name,val):
+    
+    if name.lower() in 'ssd' or name.lower() in "disk kapasitesi" or name.lower() in "sistem belleği (gb)" :
+        if val.lower() in "yok":
+            return 0
+        elif val[-2].lower() in "tb":
+            return int(val[0])*1024
+        else:
+            return int(val[:-3])
+   
+    return val
+    
+
+        
 
 
 def createXlsx():
@@ -79,7 +97,7 @@ def createXlsx():
     ws.cell(1,12,"TurboBoost")
     ws.cell(1,13,"PRICE")
 
-    wb.save("n11_bot.xlsx")   #save as
+    wb.save("n11bot.xlsx")   #save as
     wb.close()
 
 def saveToXlsx(nameList,valList,row):
@@ -97,5 +115,7 @@ def saveToXlsx(nameList,valList,row):
 
     wb.save("n11_bot.xlsx")
     wb.close()
+    
+
 
 dataExtr()
